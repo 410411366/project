@@ -334,6 +334,55 @@ def compute_dialogue_length():
     # plt.plot(dialogue_length_arr, num_arr, c='green')
     plt.scatter(dialogue_length_arr, num_arr)
     plt.show()
+#--------------------- preprocess ------------------------
+def preprocess():
+  # 初始化tokenizer
+    tokenizer = BertTokenizerFast(vocab_file="vocab.txt", sep_token="[SEP]", pad_token="[PAD]", cls_token="[CLS]")
+    sep_id = tokenizer.sep_token_id
+    cls_id = tokenizer.cls_token_id
+
+    # 读取训练数据集
+    with open("train.txt", 'rb') as f:
+        data = f.read().decode("utf-8")
+    # 开始进行tokenize
+    # 保存所有的对话数据,每条数据的格式为："[CLS]utterance1[SEP]utterance2[SEP]utterance3[SEP]"
+    dialogue_len = []  # 记录所有对话tokenize之后的长度，用于统计中位数与均值
+    dialogue_list = []
+    train_data = data.split("\n\n")
+    with open("train.pkl", "w", encoding="utf-8") as f:
+        for index, dialogue in enumerate(tqdm(train_data)):
+            if "\r\n" in data:
+                utterances = dialogue.split("\r\n")
+            else:
+                utterances = dialogue.split("\n")
+
+            input_ids = [cls_id]  # 每个dialogue以[CLS]开头
+            for utterance in utterances:
+                input_ids += tokenizer.encode(utterance, add_special_tokens=False)
+                input_ids.append(sep_id)  # 每个utterance之后添加[SEP]，表示utterance结束
+            dialogue_len.append(len(input_ids))
+            dialogue_list.append(input_ids)
+    len_mean = np.mean(dialogue_len)
+    len_median = np.median(dialogue_len)
+    len_max = np.max(dialogue_len)
+    with open("tran.pkl", "wb") as f:
+        pickle.dump(dialogue_list, f)
+    print("finish preprocessing data,the result is stored in {}".format(args.save_path))
+    print("mean of dialogue len:{},median of dialogue len:{},max len:{}".format(len_mean, len_median, len_max))
+
+    with open("tran.pkl", "rb") as f:
+        input_list = pickle.load(f)
+
+    # 划分训练集与验证集
+    val_num = 8000
+    input_list_train = input_list[val_num:]
+    input_list_val = input_list[:val_num]
+
+
+    train_dataset = MyDataset(input_list_train, 150)
+    val_dataset = MyDataset(input_list_val, 150)
+
+    return train_dataset, val_dataset
 
 #----------------------  train  -------------------------
 
