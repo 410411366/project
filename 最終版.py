@@ -10,6 +10,7 @@ Original file is located at
 import transformers
 import torch
 import os
+import sys
 import json
 import random
 import numpy as np
@@ -163,13 +164,16 @@ class BalancedDataParallel(DataParallel):
 def set_args():
     #將required設定為False使參數變更為可選參數，而非必須
     parser = argparse.ArgumentParser()
+    #parser.add_argument('--topk', type=int, default=10, help='Top-K参数')
+    #parser.add_argument('--topp', type=float, default=0.8, help='Top-P参数')
     #3號通常為效能最好的顯示卡
     parser.add_argument('--device', default='3', type=str, required=False, help='設置使用哪些顯卡')
     #parser.add_argument('--no_cuda', action='store_true', help='不使用GPU進行訓練')
-    parser.add_argument('--vocab_path', default='vocab/vocab.txt', type=str, required=False,help='詞表路徑')
-    parser.add_argument('--model_config', default='config/config.json', type=str, required=False,help='設置模型參數')
+    #parser.add_argument('--vocab_path', default='vocab/vocab.txt', type=str, required=False,help='詞表路徑')
+    #default='config/config.json'
+    parser.add_argument('--model_config', default='/config.json', type=str, required=False,help='設置模型參數')
     parser.add_argument('--train_path', default='data/train.pkl', type=str, required=False, help='訓練集路徑')
-    parser.add_argument('--max_len', default=150, type=int, required=False, help='訓練時，輸入數據的最大長度')
+    #parser.add_argument('--max_len', default=150, type=int, required=False, help='訓練時，輸入數據的最大長度')
 
     #parser.add_argument('--log_path', default='data/train.log', type=str, required=False, help='訓練日志存放位置')
     #parser.add_argument('--log', default=True, help="是否記錄日志")
@@ -201,7 +205,7 @@ def set_args():
     parser.add_argument('--val_num', type=int, default=6000, help='驗證集大小')
 
     #使用第一個GPU
-    parser.add_argument('--device', default='0', type=str, required=False, help='生成設備')
+    #parser.add_argument('--device', default='0', type=str, required=False, help='生成設備')
     #高溫會導致更多隨機性的預測
     parser.add_argument('--temperature', default=1, type=float, required=False, help='生成的temperature')
     parser.add_argument('--topk', default=8, type=int, required=False, help='最高k選1')
@@ -210,7 +214,8 @@ def set_args():
     # parser.add_argument('--model_config', default='config/model_config_dialogue_small.json', type=str, required=False,
     #                     help='模型參數')
     #parser.add_argument('--log_path', default='data/interact.log', type=str, required=False, help='interact日志存放位置')
-    parser.add_argument('--vocab_path', default='vocab/vocab.txt', type=str, required=False, help='選擇詞庫')
+    #default='vocab/vocab.txt'
+    parser.add_argument('--vocab_path', default='/vocab.txt', type=str, required=False, help='選擇詞庫')
     #
     parser.add_argument('--model_path', default='model/epoch40', type=str, required=False, help='對話模型路徑')
     parser.add_argument('--save_samples_path', default="sample/", type=str, required=False, help="保存聊天記錄的文件路徑")
@@ -223,10 +228,12 @@ def set_args():
     #若硬件不支持 GPU 則將其定為TRUE
     parser.add_argument('--no_cuda', action='store_true', help='不使用GPU進行預測')
 
-    args = parser.parse_args()
+    args = parser.parse_args(args=[])
     return args
 
+
 #----------------------------------  pytorchtools  -------------------------------
+args=set_args()
 
 class EarlyStopping:
     """Early stops the training if validation loss doesn't improve after a given patience."""
