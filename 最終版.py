@@ -640,7 +640,7 @@ print('model config:\n{}'.format(model.config.to_json_string()))
 assert model.config.vocab_size == tokenizer.vocab_size
 
 # 并行訓練模型
-if cuda and torch.cuda.device_count() > 1:
+if arg.cuda and torch.cuda.device_count() > 1:
     model = DataParallel(model).cuda()
     # model = BalancedDataParallel(args.gpu0_bsz, model, dim=0).cuda()
     print("use GPU {} to train".format(device))
