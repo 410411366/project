@@ -667,48 +667,46 @@ if 'sample/':
 history = []
 print('开始和chatbot聊天')
 while True:
-    text = input("user:")
-    # text = "你好"
-    if 'model':
-        text_ids = tokenizer.encode(text, add_special_tokens=False)
-        history.append(text_ids)
-        input_ids = [tokenizer.cls_token_id]  # 每個input以[CLS]為開頭
-        for history_id, history_utr in enumerate(history[-3:]):
-            input_ids.extend(history_utr)
-            input_ids.append(tokenizer.sep_token_id)
-        #原本:input_ids = torch.tensor(input_ids).long().to('0')
-        input_ids = torch.tensor(input_ids).long().to(device)
-        input_ids = input_ids.unsqueeze(0)
-        response = []  # 根據context，生成的response
-        # 最多生成max_len个token
-        for _ in range(25):
-            outputs = model(input_ids=input_ids)
-            logits = outputs.logits
-            next_token_logits = logits[0, -1, :]
-            # 對於已生成的結果generated中的每個token添加一個重複懲罰項，降低其生成概率
-            for id in set(response):
-                next_token_logits[id] /= 1.0
-            next_token_logits = next_token_logits / 1.0
-            # 對於[UNK]的概率設為無窮小，也就是說模型的預測結果不可能是[UNK]這個token
-            next_token_logits[tokenizer.convert_tokens_to_ids('[UNK]')] = -float('Inf')
-            filtered_logits = top_k_top_p_filtering(next_token_logits, top_k=args.topk, top_p=args.topp)
-            # torch.multinomial表示從候選集合中無放回地進行抽取num_samples個元素，權重越高，抽到的幾率越高，返回元素的下標
-            next_token = torch.multinomial(F.softmax(filtered_logits, dim=-1), num_samples=1)
-            if next_token == tokenizer.sep_token_id:  # 遇到[SEP]則表明response生成結束
-                break
-            response.append(next_token.item())
-            input_ids = torch.cat((input_ids, next_token.unsqueeze(0)), dim=1)
-            # his_text = tokenizer.convert_ids_to_tokens(curr_input_tensor.tolist())
-            # print("his_text:{}".format(his_text))
-        history.append(response)
-        text = tokenizer.convert_ids_to_tokens(response)
-        print("chatbot:" ,"{}".format(text))
-    #if text.lower() in ["exit", "quit", "bye"]:
-        #print("Chatbot: Goodbye!")
-        #break
-    if isinstance(text, list):
-      text = " ".join(token for token in text if token is not None)  # 将列表转换为字符串并过滤掉None
-    if text.lower() in ["exit", "quit", "bye"]:
+    try:
+        text = input("user:")
+        # text = "你好"
+        if 'model':
+            text_ids = tokenizer.encode(text, add_special_tokens=False)
+            history.append(text_ids)
+            input_ids = [tokenizer.cls_token_id]  # 每個input以[CLS]為開頭
+            for history_id, history_utr in enumerate(history[-3:]):
+                input_ids.extend(history_utr)
+                input_ids.append(tokenizer.sep_token_id)
+            #原本:input_ids = torch.tensor(input_ids).long().to('0')
+            input_ids = torch.tensor(input_ids).long().to(device)
+            input_ids = input_ids.unsqueeze(0)
+            response = []  # 根據context，生成的response
+            # 最多生成max_len个token
+            for _ in range(25):
+                outputs = model(input_ids=input_ids)
+                logits = outputs.logits
+                next_token_logits = logits[0, -1, :]
+                # 對於已生成的結果generated中的每個token添加一個重複懲罰項，降低其生成概率
+                for id in set(response):
+                    next_token_logits[id] /= 1.0
+                next_token_logits = next_token_logits / 1.0
+                # 對於[UNK]的概率設為無窮小，也就是說模型的預測結果不可能是[UNK]這個token
+                next_token_logits[tokenizer.convert_tokens_to_ids('[UNK]')] = -float('Inf')
+                filtered_logits = top_k_top_p_filtering(next_token_logits, top_k=args.topk, top_p=args.topp)
+                # torch.multinomial表示從候選集合中無放回地進行抽取num_samples個元素，權重越高，抽到的幾率越高，返回元素的下標
+                next_token = torch.multinomial(F.softmax(filtered_logits, dim=-1), num_samples=1)
+                if next_token == tokenizer.sep_token_id:  # 遇到[SEP]則表明response生成結束
+                    break
+                response.append(next_token.item())
+                input_ids = torch.cat((input_ids, next_token.unsqueeze(0)), dim=1)
+                # his_text = tokenizer.convert_ids_to_tokens(curr_input_tensor.tolist())
+                # print("his_text:{}".format(his_text))
+            history.append(response)
+            text = tokenizer.convert_ids_to_tokens(response)
+            print("chatbot:" ,"{}".format(text))
+        if isinstance(text, list):
+          text = " ".join(token for token in text if token is not None)  # 将列表转换为字符串并过滤掉None
+    except KeyboardInterrupt:
       print("Chatbot: Goodbye!")
       break
 
