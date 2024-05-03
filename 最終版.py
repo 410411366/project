@@ -668,7 +668,6 @@ while True:
     text = input("user:")
     # text = "你好"
     if 'model':
-        samples_file.write("user:{}\n".format(text))
         text_ids = tokenizer.encode(text, add_special_tokens=False)
         history.append(text_ids)
         input_ids = [tokenizer.cls_token_id]  # 每個input以[CLS]為開頭
@@ -700,9 +699,7 @@ while True:
             # print("his_text:{}".format(his_text))
         history.append(response)
         text = tokenizer.convert_ids_to_tokens(response)
-        print("chatbot:" + "".join(text))
-        if args.save_samples_path:
-            samples_file.write("chatbot:{}\n".format("".join(text)))
+        print("chatbot:" ,"{}".format(text))
     if text.lower() in ["exit", "quit", "bye"]:
         print("Chatbot: Goodbye!")
         break
