@@ -400,7 +400,7 @@ def collate_fn(batch):
     labels = rnn_utils.pad_sequence(batch, batch_first=True, padding_value=-100)
     return input_ids, labels
 
-def train_epoch(model, train_dataloader, optimizer, scheduler, logger, epoch, args):
+def train_epoch(model, train_dataloader, optimizer, scheduler, epoch, args):
     model.train()
     device = args.device
     ignore_index = args.ignore_index
@@ -473,7 +473,7 @@ def train_epoch(model, train_dataloader, optimizer, scheduler, logger, epoch, ar
 
     return epoch_mean_loss
 
-def validate_epoch(model, validate_dataloader, logger, epoch, args):
+def validate_epoch(model, validate_dataloader, epoch, args):
     logger.info("start validating")
     model.eval()
     device = args.device
@@ -512,7 +512,7 @@ def validate_epoch(model, validate_dataloader, logger, epoch, args):
             logger.info(str(exception))
             raise exception
 
-def train(model, logger, train_dataset, validate_dataset, args):
+def train(model, train_dataset, validate_dataset, args):
     train_dataloader = DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn,
         drop_last=True
