@@ -659,12 +659,6 @@ model = GPT2LMHeadModel.from_pretrained(model_name)
 model = model.to(device)
 model.eval()
 
-if 'sample/':
-    if not os.path.exists('sample/'):
-        os.makedirs('sample/')
-    samples_file = open('sample/' + '/samples.txt', 'a', encoding='utf8')
-    samples_file.write("聊天记录{}:\n".format(datetime.now()))
-
 history = []
 print('开始和chatbot聊天')
 while True:
