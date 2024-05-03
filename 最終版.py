@@ -696,7 +696,7 @@ while True:
         print("chatbot:" + "".join(text))
         if args.save_samples_path:
             samples_file.write("chatbot:{}\n".format("".join(text)))
-    if user_input.lower() in ["exit", "quit", "bye"]:
+    if text.lower() in ["exit", "quit", "bye"]:
         print("Chatbot: Goodbye!")
         break
 
