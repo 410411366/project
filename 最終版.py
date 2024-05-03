@@ -645,8 +645,8 @@ if arg.cuda and torch.cuda.device_count() > 1:
     # model = BalancedDataParallel(args.gpu0_bsz, model, dim=0).cuda()
     print("use GPU {} to train".format(device))
 
-model = GPT2LMHeadModel.from_pretrained('')
-model = model.to('0')
+model = GPT2LMHeadModel.from_pretrained(args.model_path)
+model = model.to(device)
 model.eval()
 
 if 'sample/':
