@@ -34,6 +34,7 @@ from matplotlib.pyplot import MultipleLocator
 import torch.nn.functional as F
 import math
 import time
+import pickle
 import torch.optim as optim
 #from pytorchtools import EarlyStopping
 import pandas as pd
@@ -647,12 +648,13 @@ print('model config:\n{}'.format(model.config.to_json_string()))
 assert model.config.vocab_size == tokenizer.vocab_size
 
 # 并行訓練模型
-if arg.cuda and torch.cuda.device_count() > 1:
-    model = DataParallel(model).cuda()
-    # model = BalancedDataParallel(args.gpu0_bsz, model, dim=0).cuda()
-    print("use GPU {} to train".format(device))
+#if arg.cuda and torch.cuda.device_count() > 1:
+#    model = DataParallel(model).cuda()
+#    # model = BalancedDataParallel(args.gpu0_bsz, model, dim=0).cuda()
+#    print("use GPU {} to train".format(device))
 
-model = GPT2LMHeadModel.from_pretrained(args.model_path)
+#原本:model = GPT2LMHeadModel.from_pretrained(args.model_path)
+model = GPT2LMHeadModel.from_pretrained(model_name)
 model = model.to(device)
 model.eval()
 
@@ -674,7 +676,8 @@ while True:
         for history_id, history_utr in enumerate(history[-3:]):
             input_ids.extend(history_utr)
             input_ids.append(tokenizer.sep_token_id)
-        input_ids = torch.tensor(input_ids).long().to('0')
+        #原本:input_ids = torch.tensor(input_ids).long().to('0')
+        input_ids = torch.tensor(input_ids).long().to(device)
         input_ids = input_ids.unsqueeze(0)
         response = []  # 根據context，生成的response
         # 最多生成max_len个token
@@ -700,9 +703,16 @@ while True:
         history.append(response)
         text = tokenizer.convert_ids_to_tokens(response)
         print("chatbot:" ,"{}".format(text))
+    #if text.lower() in ["exit", "quit", "bye"]:
+        #print("Chatbot: Goodbye!")
+        #break
+    if isinstance(text, list):
+      text = " ".join(token for token in text if token is not None)  # 将列表转换为字符串并过滤掉None
     if text.lower() in ["exit", "quit", "bye"]:
-        print("Chatbot: Goodbye!")
-        break
+      print("Chatbot: Goodbye!")
+      break
+
+
 
 
 
