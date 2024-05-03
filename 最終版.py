@@ -618,8 +618,8 @@ def top_k_top_p_filtering(logits, top_k=0, top_p=0.0, filter_value=-float('Inf')
     return logits
 
 #-----------------------    interact  -----------------
-cuda = torch.cuda.is_available() and not args.no_cuda
-device = 'cuda:0' if cuda else 'cpu'
+args.cuda = torch.cuda.is_available() and not args.no_cuda
+    device = 'cuda' if args.cuda else 'cpu'
 
 # 初始化tokenizer
 tokenizer = BertTokenizerFast(vocab_file='/vocab.txt', sep_token="[SEP]", pad_token="[PAD]", cls_token="[CLS]")
@@ -630,11 +630,11 @@ cls_id = tokenizer.cls_token_id
 
 model_name = "gpt2"
 
-if '':  # 加載預訓練模型
-  model = GPT2LMHeadModel.from_pretrained(model_name)
+if args.pretrained_model:  # 加载预训练模型
+        model = GPT2LMHeadModel.from_pretrained(args.pretrained_model)
 else:  # 初始化模型
-  model_config = GPT2Config.from_json_file('/config.json')
-  model = GPT2LMHeadModel(config=model_config)
+        model_config = GPT2Config.from_json_file(args.model_config)
+        model = GPT2LMHeadModel(config=model_config)
 model = model.to(device)
 print('model config:\n{}'.format(model.config.to_json_string()))
 assert model.config.vocab_size == tokenizer.vocab_size
