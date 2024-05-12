@@ -15,7 +15,8 @@ from bs4 import BeautifulSoup
 
 # 定义维基百科页面的URL
 url = 'https://zh.wikipedia.org/wiki/%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91'
-
+# 淡江大學教務處網址
+tku_url1 = 'https://acad.tku.edu.tw/'
 # 发送HTTP请求获取页面内容
 response = requests.get(url)
 
@@ -35,18 +36,6 @@ for div in paragraph_divs:
 import requests
 from bs4 import BeautifulSoup
 
-# 定义维基百科页面的URL
-url = 'https://zh.wikipedia.org/wiki/%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91'
-
-# 发送HTTP请求获取页面内容
-response = requests.get(url)
-
-# 使用Beautiful Soup解析HTML
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# 找到所有包含段落内容的div元素
-paragraph_divs = soup.find_all('div', class_='mw-parser-output')
-
 # 提取每个div元素中的文本内容作为段落
 for div in paragraph_divs:
     paragraphs = div.find_all('p')
@@ -59,30 +48,6 @@ for div in paragraph_divs:
 import requests
 from bs4 import BeautifulSoup
 
-# 定义维基百科页面的URL
-url = 'https://zh.wikipedia.org/wiki/%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91'
-
-# 发送HTTP请求获取页面内容
-response = requests.get(url)
-
-# 使用Beautiful Soup解析HTML
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# 找到所有包含段落内容的div元素
-paragraph_divs = soup.find_all('div', class_='mw-parser-output')
-
-# 提取每个div元素中的文本内容作为段落
-for div in paragraph_divs:
-    paragraphs = div.find_all('p')
-    for paragraph in paragraphs:
-        # 去除HTML标记，只保留纯文本内容
-        text = paragraph.get_text()
-        # 根据换行符分段
-        segments = text.split('\n')
-        for segment in segments:
-            # 如果段落不为空，则打印
-            if segment.strip():
-                print(segment.strip())
 
 #清洗文本
 import requests
@@ -141,18 +106,6 @@ import nltk
 
 # 下载NLTK的punkt分词器
 nltk.download('punkt')
-
-# 定义维基百科页面的URL
-url = 'https://zh.wikipedia.org/wiki/%E7%BB%B4%E5%9F%BA%E7%99%BE%E7%A7%91'
-
-# 发送HTTP请求获取页面内容
-response = requests.get(url)
-
-# 使用Beautiful Soup解析HTML
-soup = BeautifulSoup(response.text, 'html.parser')
-
-# 找到所有包含段落内容的div元素
-paragraph_divs = soup.find_all('div', class_='mw-parser-output')
 
 # 定义一个函数来清洗文本
 def clean_text(text):
