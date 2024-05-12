@@ -627,6 +627,8 @@ def top_k_top_p_filtering(logits, top_k=0, top_p=0.0, filter_value=-float('Inf')
     return logits
 
 #-----------------------    interact  -----------------
+def main()
+preprocess()
 args.cuda = torch.cuda.is_available() and not args.no_cuda
 device = 'cuda' if args.cuda else 'cpu'
 args = set_args()
