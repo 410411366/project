@@ -376,7 +376,7 @@ def preprocess():
     len_max = np.max(dialogue_len)
     with open("tran.pkl", "wb") as f:
         pickle.dump(dialogue_list, f)
-    print("finish preprocessing data,the result is stored in {}".format(args.save_path))
+    
     print("mean of dialogue len:{},median of dialogue len:{},max len:{}".format(len_mean, len_median, len_max))
 
     with open("tran.pkl", "rb") as f:
@@ -657,7 +657,7 @@ assert model.config.vocab_size == tokenizer.vocab_size
 #    print("use GPU {} to train".format(device))
 
 #原本:model = GPT2LMHeadModel.from_pretrained(args.model_path)
-model = GPT2LMHeadModel.from_pretrained(model_name)
+model = GPT2LMHeadModel.from_pretrained(args.model_path)
 model = model.to(device)
 model.eval()
 
