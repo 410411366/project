@@ -379,7 +379,7 @@ def preprocess():
     
     print("mean of dialogue len:{},median of dialogue len:{},max len:{}".format(len_mean, len_median, len_max))
 
-    with open("tran.pkl", "rb") as f:
+    with open("train.pkl", "rb") as f:
         input_list = pickle.load(f)
 
     # 划分训练集与验证集
