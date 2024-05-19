@@ -374,7 +374,7 @@ def preprocess():
     len_mean = np.mean(dialogue_len)
     len_median = np.median(dialogue_len)
     len_max = np.max(dialogue_len)
-    with open("tran.pkl", "wb") as f:
+    with open("train.pkl", "wb") as f:
         pickle.dump(dialogue_list, f)
     
     print("mean of dialogue len:{},median of dialogue len:{},max len:{}".format(len_mean, len_median, len_max))
